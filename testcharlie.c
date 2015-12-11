@@ -23,7 +23,7 @@ stack_int * new_blocked_stack_int(int block_size){
 	s->size = 0;									//sets the size of the stack to zero
 	s->block_size = block_size;						//assigns block_size and the block size 
 };
-
+//test
 
 /*************************************************************/
 int stack_int_isempty(stack_int *s){
