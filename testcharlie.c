@@ -8,6 +8,7 @@ struct node
 	struct node *next; 			//points to next node in stack 
 	int *element;				//creates a pointer to 
 	int top;					//
+	int s;
 };
 /*************************************************************/
 struct stack_int_implementation
@@ -20,8 +21,9 @@ struct stack_int_implementation
 stack_int * new_blocked_stack_int(int block_size){
 	stack_int * s = (stack_int*)malloc(sizeof(block_size));	//allocates memory for the stack 
 	s->top = NULL; 								//this makes it so the top of the stack holds no value on creation							
-	s->size = 0;									//sets the size of the stack to zero
+	s->size = block_size;							//sets the size of the stack to zero
 	s->block_size = block_size;						//assigns block_size and the block size 
+	return s;
 };
 
 
@@ -40,8 +42,8 @@ int  stack_int_size(stack_int *s){
 /*************************************************************/
 void stack_int_push(stack_int *s, int x){
 	assert(s!=NULL);								//checks that s is defined
-	if(stack_int_size(s) == (s->block_size)){				//checks to see if the block is full
-		struct node *new_blocked_stack_int;		//creates a new block with a pointer to previous block
+	if (s->size == 0 || s->top->top >= (s->block_size)) {
+		struct node *next = (struct node *)malloc(s->block_size * sizeof(int));
 	}
 	else{
 		s->top->element[s->top->top] = x;				//this point to next available in the elements array
@@ -63,12 +65,33 @@ void stack_int_pop(stack_int *s){
 }		
 /************************************************************/
 int  stack_int_top(stack_int *s){
-	return 0;
+	assert(s!=NULL);
+	if(stack_int_isempty(s)){
+		printf("stack is empty\n");
+		exit(1);
+	}
+	else{ 
+		return (s->top->element);
+	}
 }
-/*************************************************************
-void stack_int_display(stack_int*s){
-assert(s!=NULL);								//checks that s is defined
-}*/
-/*************************************************************
+/*************************************************************/
+void stack_int_display(stack_int *s){
+	assert(s!=NULL);								//checks that s is defined
+	struct node *p = s->top;
+	printf("Stack=/n -----");
+	if (p!=NULL){
+		while(p->next!=NULL){
+		         printf("[");
+			 printf("%i", p->element);
+	                 printf("]/n");
+                	 p = p->next;
+		 }
+		printf("%i", p->element);
+	}
+	printf("-----");
+}
+/*************************************************************/
 void stack_int_release(stack_int *s){
-}*/
+	assert(s!=NULL);
+	free(s);
+}
