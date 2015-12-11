@@ -20,12 +20,13 @@ struct stack_int_implementation
 }
 /**********************************************************************************/
 
-stack_int * new_blocked_stack_int(int block_size){ 	
-	stack_int * s = (stack_int*)malloc(sizeof(block_size));
-	s->top = NULL;			//makes sure top of stack is empty upon creation
-	s->size = 0;			//sets stack size to 0
-	s->block_size = block_size;	//assigns block_size as the block size
-}
+stack_int * new_blocked_stack_int(int block_size){
+	stack_int * s = (stack_int*)malloc(sizeof(block_size));	//allocates memory for the stack 
+	s->top = NULL; 								//this makes it so the top of the stack holds no value on creation							
+	s->size = 0;									//sets the size of the stack to zero
+	s->block_size = block_size;						//assigns block_size and the block size 
+};
+
 /**********************************************************************************/
 int stack_int_isempty(stack_int *s){
 	assert(s!=NULL);			//check if s is defined before dereferencing
