@@ -1,1 +1,1 @@
-# CAssignment, fuck this shit
+# C Assignment, linked list of structures
