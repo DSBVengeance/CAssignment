@@ -1,9 +1,7 @@
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "blocked_stack_int.h"
-/**********************************************************************************/
 
 struct node
 {
@@ -11,87 +9,101 @@ struct node
 	int *data;				//
 	int top;				
 };
-/**********************************************************************************/
+
 struct stack_int_implementation
 {
 	struct node * top;			//
 	int size;
 	int block_size;
 };
-/**********************************************************************************/
 
 stack_int * new_blocked_stack_int(int block_size){
-	stack_int * s = (stack_int*)malloc(sizeof(block_size));	//allocates memory for the stack 
-	s->top = 0; 								//this makes it so the top of the stack holds no value on creation							
-	s->size = 0;									//sets the size of the stack to zero
-	s->block_size = block_size;						//assigns block_size and the block size 
-	return s;
-};
-
-/**********************************************************************************/
-int stack_int_isempty(stack_int *s){
-	assert(s!=NULL);			//check if s is defined before dereferencing
-	return (s->size == 0);			//returns true or false dependant on whether
-						//size is zero or not
+	stack_int * s = (stack_int *)malloc(sizeof(stack_int));	
+	s->top = NULL; 							
+	s->size = 0;	
+	s->block_size = block_size;						
 }
-/**********************************************************************************/
+
+int stack_int_isempty(stack_int *s){
+	assert(s!=NULL);
+	return (s->size == 0);	
+}
+
 int  stack_int_size(stack_int *s){
 	assert(s!=NULL);
-	return(s->size);		//returns how many items are in the stack
-
+	return(s->size);	
+	
 }
-/**********************************************************************************/
+
 void stack_int_push(stack_int *s, int x){
-	assert(s!=NULL);
-	if (s->size == 0 || s->top->top >= (s->block_size)) {
-		struct node *next = (struct node *)malloc(s->block_size * sizeof(int));	//creates new block with pointer to previous block
+	assert(s != NULL);
+	if (s->top == NULL || s->top->top == (s->block_size)) {
+		struct node *next = (struct node *)malloc(sizeof(struct node));
+		if(next==NULL){
+			printf("stack_int error:\n");
+			exit(1);
+		}
+		next->data = (int*)malloc(s->block_size * sizeof(int));
+		next->top = 0;
+		next->next = s->top;
+		s->top = next;
 	}
-	else {
-		s->top->data[s->top->top] = x;		//points to the next available
-							//space in the s->items array.
-							//make it equal to x (the next item to be added.
-		(s->top->top)++;			//Go to next free space index
-		(s->size)++; 
-	}
+	s->top->data[s->top->top] = x;	
+	s->size++;	
+	s->top->top++;	 
 }
 
-/**********************************************************************************/
 void stack_int_pop(stack_int *s){
 	assert(s!=NULL);
 	if(stack_int_isempty(s)){
-		printf("No value can be popped as stack is empty");
-		exit(1);
+		printf("No value can be popped as stack is empty\n");
 	}
-	else{
-	s->top->data[s->top->top]--;
-	(s->size)--;
+	s->top->top--;
+	s->size--;
+	if(s->top->top == 0) {
+		struct node * p = s->top;
+		s->top = s->top->next;
+		free(p->data);
+		free(p);
 	}
-
+	
 }
-/**********************************************************************************/
-int  stack_int_top(stack_int *s){
 
-
-
+int stack_int_top(stack_int *s)
+{
+        assert(s!=NULL);                      
+        if (stack_int_isempty(s)) {
+                printf("stack_int_top error: stack is currently empty.\n");
+        }
+        else {       	
+        	return (s->top->data[(s->top->top) - 1]);
+        }
 }
-/**********************************************************************************/
+
 void stack_int_display(stack_int *s){
 	assert(s!=NULL);
-	struct node *p = s->top;
-	printf("Stack=/n -----");
-	if(p!=NULL){		
-		while (p->next!=NULL){
+	int i=0;
+	printf("Stack=\n -----\n");
+	if(!stack_int_isempty(s)){
+		struct node * p = s->top;
+		while (p != NULL){
 			printf("[");
-			printf("%i ", p->data);
-			p = p->next;
-			printf("]/n");
+			int count = 0;
+			for(count = p->top - 1; count >= 0; count++){
+				printf("%i, ", p->data[count]);
+			}
+			printf("]\n");
+			p = p->next;			
 		}
-		printf("%i", p->data);
+	}
+	else{
+		printf("EMPTY");
 	}
 	printf("-----------------");
 }
-/**********************************************************************************
+
 void stack_int_release(stack_int *s)
 {
-
-}*/
+	assert(s!=NULL);
+	free(s);
+}
